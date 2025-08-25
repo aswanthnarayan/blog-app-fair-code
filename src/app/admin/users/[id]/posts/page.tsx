@@ -52,7 +52,7 @@ export default function UserPostsPage() {
         });
         
         setUserPosts(filteredPosts);
-      } catch (err: any) {
+      } catch (err: unknown) {
         setError('Failed to load user posts');
         console.error('Error fetching user posts:', err);
       } finally {

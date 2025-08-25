@@ -13,7 +13,6 @@ export default function PostDetailPage() {
   const [post, setPost] = useState<Post | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
-  const [deleteLoading, setDeleteLoading] = useState(false);
 
   const {
     isOpen: isConfirmModalOpen,
@@ -152,7 +151,7 @@ export default function PostDetailPage() {
                 <Button
                   variant="danger"
                   onClick={handleDeletePost}
-                  loading={deleteLoading || confirmLoading}
+                  loading={confirmLoading}
                 >
                   Delete Post
                 </Button>

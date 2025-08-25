@@ -13,11 +13,12 @@ const updatePostSchema = z.object({
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   await dbConnect();
   try {
-    const post = await Post.findById(params.id).populate("author", "name email");
+    const { id } = await params;
+    const post = await Post.findById(id).populate("author", "name email");
     if (!post) {
       return NextResponse.json({ message: "Post not found" }, { status: 404 });
     }
@@ -34,20 +35,21 @@ export async function GET(
 
 export async function PUT(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   await dbConnect();
   try {
-    const tokenData = getDataFromToken(request);
+    const { id } = await params;
     const body = await request.json();
     const { title, content } = updatePostSchema.parse(body);
 
-    const post = await Post.findById(params.id);
+    const post = await Post.findById(id);
 
     if (!post) {
       return NextResponse.json({ message: "Post not found" }, { status: 404 });
     }
 
+    const tokenData = getDataFromToken(request);
     if (post.author.toString() !== tokenData.userId && tokenData.role !== "admin") {
       return NextResponse.json({ message: "Forbidden" }, { status: 403 });
     }
@@ -82,12 +84,13 @@ export async function PUT(
 
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   await dbConnect();
   try {
+    const { id } = await params;
     const tokenData = getDataFromToken(request);
-    const post = await Post.findById(params.id);
+    const post = await Post.findById(id);
 
     if (!post) {
       return NextResponse.json({ message: "Post not found" }, { status: 404 });
@@ -97,7 +100,7 @@ export async function DELETE(
       return NextResponse.json({ message: "Forbidden" }, { status: 403 });
     }
 
-    await Post.findByIdAndDelete(params.id);
+    await Post.findByIdAndDelete(id);
 
     return NextResponse.json({ message: "Post deleted successfully" });
   } catch (error: any) {
