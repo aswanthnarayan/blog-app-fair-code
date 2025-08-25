@@ -2,6 +2,7 @@ import { NextResponse, NextRequest } from "next/server";
 import { z } from "zod";
 import dbConnect from "@/lib/db";
 import Post from "@/models/Post";
+import User from "@/models/User";
 import { getDataFromToken } from "@/helpers/getDataFromToken";
 
 const updatePostSchema = z.object({
@@ -63,7 +64,7 @@ export async function PUT(
   } catch (error: any) {
     if (error instanceof z.ZodError) {
       return NextResponse.json(
-        { message: "Validation failed", errors: error.errors },
+        { message: "Validation failed", errors: error },
         { status: 400 }
       );
     }
